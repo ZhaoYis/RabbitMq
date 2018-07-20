@@ -224,7 +224,8 @@ namespace Framework.RabbitMq
         {
             var channel = GetModel(exchange, queue, routingKey, type, isProperties);
             var properties = channel.CreateBasicProperties();
-            properties.DeliveryMode = 1;//DeliveryMode等于2就说明这个消息是持久化的。1是默认是，不是持久的。
+            //DeliveryMode等于2就说明这个消息是持久化的。1是默认是，不是持久的。
+            properties.DeliveryMode = isProperties ? (byte)2 : (byte)1;
             properties.Persistent = true;
 
             try
@@ -254,6 +255,8 @@ namespace Framework.RabbitMq
             var deadLetterExchange = queueInfo.ExchangeName;
             var deadLetterRoutingKey = queueInfo.RoutingKey;
             string deadLetterQueue = queueInfo.QueueName;
+            var isProperties = queueInfo.IsProperties;
+
             var deadLetterBody = new DeadLetterQueue
             {
                 Body = body,
@@ -264,7 +267,7 @@ namespace Framework.RabbitMq
                 Exchange = deadLetterExchange
             };
 
-            Publish(deadLetterExchange, deadLetterQueue, deadLetterRoutingKey, deadLetterBody.ToJson(), type);
+            Publish(deadLetterExchange, deadLetterQueue, deadLetterRoutingKey, deadLetterBody.ToJson(), type, isProperties);
         }
 
         #endregion 发布消息
