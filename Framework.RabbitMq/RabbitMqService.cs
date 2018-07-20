@@ -224,6 +224,7 @@ namespace Framework.RabbitMq
         {
             var channel = GetModel(exchange, queue, routingKey, type, isProperties);
             var properties = channel.CreateBasicProperties();
+            properties.DeliveryMode = 1;//DeliveryMode等于2就说明这个消息是持久化的。1是默认是，不是持久的。
             properties.Persistent = true;
 
             try
